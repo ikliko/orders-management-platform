@@ -11,6 +11,6 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::redirect('/', '/orders', 301);
+
+Route::resource('/orders', 'OrdersController');
