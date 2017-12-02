@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
+use \App\Models\Order;
 
 class AppServiceProvider extends ServiceProvider {
 	/**
@@ -21,6 +23,20 @@ class AppServiceProvider extends ServiceProvider {
 	 * @return void
 	 */
 	public function register() {
-		//
+		view()->composer('menus.sidebar', function($view) {
+			if(Auth::user()->is_admin) {
+				$view->with('allOrders', Order::count());
+				$view->with('trashedOrders', Order::onlyTrashed()->count());
+			}
+			$view->with('myOrders', Auth::user()->orders->count());
+		});
+
+		view()->composer('partials.components.filter', function($view) {
+			$view->with('periods', [
+				'all_time' => 'All time',
+				'last_week' => 'Last 7 days',
+				'today' => 'Today',
+			]);
+		});
 	}
 }

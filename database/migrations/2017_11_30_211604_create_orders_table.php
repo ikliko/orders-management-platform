@@ -15,11 +15,10 @@ class CreateOrdersTable extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->increments('id');
-
             $table->integer('user_id');
             $table->decimal('total', 10, 2);
-
-            $table->timestamps();
+			$table->softDeletes();
+			$table->timestamps();
         });
     }
 
