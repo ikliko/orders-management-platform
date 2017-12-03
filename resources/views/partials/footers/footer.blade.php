@@ -1,2 +1,2 @@
 <hr>
-All rights reserved &copy; | Kliko
+<p class="text-center">All rights reserved &copy; | Kliko</p>
