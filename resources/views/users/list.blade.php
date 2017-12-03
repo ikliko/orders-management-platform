@@ -7,10 +7,10 @@
         <thead>
         <tr>
             <th>#</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Date</th>
-            <th>Actions</th>
+            <th>@lang('fields.name')</th>
+            <th>@lang('fields.email')</th>
+            <th>@lang('fields.date')</th>
+            <th>{{trans_choice('fields.actions', 2)}}</th>
         </tr>
         </thead>
         <tbody>
@@ -30,7 +30,7 @@
                                 @if(Request::url() !== url('users/trashed'))
                                     <li>
                                         <a href="{{url('users/' . $user['id'] . '/edit')}}">
-                                            <i class="ion ion-edit"></i>&nbsp; Edit
+                                            <i class="ion ion-edit"></i>&nbsp; @lang('fields.edit')
                                         </a>
                                     </li>
                                 @endif
@@ -38,14 +38,14 @@
                                     @if(Request::url() !== url('users/trashed'))
                                         <a data-toggle="modal"
                                            data-target="#deleteModal">
-                                            <i class="ion ion-ios-trash"></i>&nbsp; Delete
+                                            <i class="ion ion-ios-trash"></i>&nbsp; @lang('fields.delete')
                                         </a>
                                     @endif
 
                                     @if(Request::url() === url('users/trashed'))
                                         <a data-toggle="modal"
                                            data-target="#restoreModal">
-                                            <i class="ion ion-ios-undo-outline'"></i>&nbsp; Restore
+                                            <i class="ion ion-ios-undo-outline'"></i>&nbsp; @lang('fields.restore')
                                         </a>
                                     @endif
                                 </li>
@@ -55,25 +55,33 @@
                         @if(Request::url() !== url('users/trashed') && Auth::user() -> is_admin)
                             @include('partials.components.modal', [
                                 'hideBtn' => true,
-                                'btnText' => '&nbsp; Delete',
+                                'btnText' => '&nbsp; '.Lang::get('fields.delete'),
                                 'modal' => 'deleteModal',
                                 'url' => url('users/'.$user['id']),
                                 'method' => 'DELETE',
-                                'title' => 'Are you sure?',
-                                'text' => 'You are going to delete user #'. $user['id']
+                                'title' => Lang::get('fields.are-you-sure-q'),
+                                'text' => Lang::get('fields.modal-text', [
+                                    'entity' => trans_choice('fields.users', 1),
+                                    'action' => Lang::get('fields.delete'),
+                                    'id' => $user['id']
+                                ])
                             ])
                         @endif
 
                         @if(Request::url() === url('users/trashed') && Auth::user() -> is_admin)
                             @include('partials.components.modal', [
                                 'hideBtn' => true,
-                                'btnText' => '&nbsp; Restore',
+                                'btnText' => '&nbsp; '.Lang::get('fields.restore'),
                                 'btnIcon' => 'ion-ios-undo-outline',
                                 'modal' => 'restoreModal',
                                 'url' => url('users/'.$user['id'].'/restore'),
                                 'method' => 'POST',
-                                'title' => 'Are you sure?',
-                                'text' => 'You are going to restore user #'. $user['id']
+                                'title' => Lang::get('fields.are-you-sure-q'),
+                                'text' => Lang::get('fields.modal-text', [
+                                    'entity' => trans_choice('fields.users', 1),
+                                    'action' => Lang::get('fields.delete'),
+                                    'id' => $user['id']
+                                ])
                             ])
                         @endif
                     </div>

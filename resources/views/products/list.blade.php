@@ -55,25 +55,33 @@
                         @if(Request::url() !== url('products/trashed') && Auth::user() -> is_admin)
                             @include('partials.components.modal', [
                                 'hideBtn' => true,
-                                'btnText' => '&nbsp; Delete',
+                                'btnText' => '&nbsp; '.Lang::get('fields.delete'),
                                 'modal' => 'deleteModal',
                                 'url' => url('products/'.$product['id']),
                                 'method' => 'DELETE',
-                                'title' => 'Are you sure?',
-                                'text' => 'You are going to delete product #'. $product['id']
+                                'title' => Lang::get('fields.are-you-sure-q'),
+                                'text' => Lang::get('fields.modal-text', [
+                                    'entity' => trans_choice('fields.products', 1),
+                                    'action' => Lang::get('fields.delete'),
+                                    'id' => $product['id']
+                                ])
                             ])
                         @endif
 
                         @if(Request::url() === url('products/trashed') && Auth::user() -> is_admin)
                             @include('partials.components.modal', [
                                 'hideBtn' => true,
-                                'btnText' => '&nbsp; Restore',
+                                'btnText' => '&nbsp; '.Lang::get('fields.restore'),
                                 'btnIcon' => 'ion-ios-undo-outline',
                                 'modal' => 'restoreModal',
                                 'url' => url('products/'.$product['id'].'/restore'),
                                 'method' => 'POST',
-                                'title' => 'Are you sure?',
-                                'text' => 'You are going to restore product #'. $product['id']
+                                'title' => Lang::get('fields.are-you-sure-q'),
+                                'text' => Lang::get('fields.modal-text', [
+                                    'entity' => trans_choice('fields.products', 1),
+                                    'action' => Lang::get('fields.restore'),
+                                    'id' => $product['id']
+                                ])
                             ])
                         @endif
                     </div>

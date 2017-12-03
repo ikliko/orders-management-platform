@@ -19,8 +19,8 @@
                 <p>{{$text}}</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn btn-default">OK</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">@lang('fields.cancel')</button>
+                <button type="submit" class="btn btn-default">@lang('fields.ok')</button>
             </div>
             {!! Form::close() !!}
         </div>

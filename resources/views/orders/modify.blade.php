@@ -5,7 +5,7 @@
     <fieldse>
         @if(Auth::user()->is_admin)
         <div class="form-group {{$errors->has('user_id') ? 'has-error' : '' }}">
-            <label for="select" class="col-lg-2 control-label">User</label>
+            <label for="select" class="col-lg-2 control-label">{{trans_choice('fields.users', 1)}}</label>
             <div class="col-lg-10">
                 {!! Form::select('user_id', \App\User::pluck('name', 'id'), isset($order) ? $order->user->id : null, ['class' => 'form-control']) !!}
             </div>
@@ -15,7 +15,7 @@
         </div>
         @endif
         <div class="form-group {{$errors->has('product_id') ? 'has-error' : '' }}">
-            <label for="product" class="col-lg-2 control-label">Product</label>
+            <label for="product" class="col-lg-2 control-label">{{trans_choice('fields.products', 1)}}</label>
             <div class="col-lg-10">
                 {!! Form::select('product_id', \App\Models\Product::pluck('name', 'id'), isset($order) ? $order->details()->first()->id : null, array('id' => 'product', 'class' => 'form-control')) !!}
                 @if($errors->has('product_id'))
@@ -24,13 +24,12 @@
             </div>
         </div>
         <div class="form-group {{$errors->has('quantity') ? 'has-error' : '' }}">
-            <label for="quantity" class="col-lg-2 control-label">Quantity</label>
+            <label for="quantity" class="col-lg-2 control-label">@lang('fields.quantity')</label>
             <div class="col-lg-10">
                 <input type="number"
                        class="form-control"
                        id="quantity"
                        name="quantity"
-                       placeholder="Quantity"
                        min="1"
                        value="{{isset($order) ? $order->details()->first()->pivot->quantity : 1}}">
                 @if($errors->has('quantity'))
@@ -39,8 +38,8 @@
             </div>
         </div>
         <div class="form-group text-center">
-            <a href="{{url('home')}}" class="btn btn-default">Cancel</a>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <a href="{{url('home')}}" class="btn btn-default">@lang('fields.cancel')</a>
+            <button type="submit" class="btn btn-primary">@lang('fields.submit')</button>
         </div>
     </fieldse>
     {!! Form::close() !!}
