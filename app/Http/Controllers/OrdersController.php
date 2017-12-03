@@ -64,7 +64,7 @@ class OrdersController extends Controller {
 			}
 		}
 
-		$orders = $orders->sortBy('created_at', SORT_DESC, true);
+		$orders = $orders->unique('id')->sortBy('created_at', SORT_DESC, true);
 
 		$page = $request->get('page', 1); // Get the ?page=1 from the url
 		$perPage = 5; // Number of items per page
