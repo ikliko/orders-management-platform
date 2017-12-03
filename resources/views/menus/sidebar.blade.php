@@ -74,4 +74,37 @@
             </div>
         </div>
     </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Users</div>
+        <div class="panel-body rm-pa">
+            <div class="list-group rm-mb">
+                @if(Auth::user()->is_admin)
+                    <a href="{{url('users')}}"
+                       class="list-group-item {{$active === url('users') ? 'active' : ''}}">
+                        @if($allUsers)
+                            <span class="badge">{{$allUsers}}</span>
+                        @endif
+                        <i class="ion ion-ios-paper-outline"></i>&nbsp;
+                        All
+                    </a>
+
+                    <a href="{{url('users/trashed')}}"
+                       class="list-group-item {{$active === url('users/trashed') ? 'active' : ''}}">
+                        @if($trashedUsers)
+                            <span class="badge">{{$trashedUsers}}</span>
+                        @endif
+                        <i class="ion ion-ios-trash-outline"></i>&nbsp;
+                        Trashed
+                    </a>
+                @endif
+
+                <a href="{{url('users/create')}}"
+                   class="list-group-item {{$active === url('users/create') ? 'active' : ''}}">
+                    <i class="ion ion-ios-compose-outline"></i>&nbsp;
+                    Create new
+                </a>
+            </div>
+        </div>
+    </div>
 @endif

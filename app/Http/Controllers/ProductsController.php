@@ -15,6 +15,12 @@ class ProductsController extends Controller {
 		];
 	}
 
+	public function accessible() {
+		if (!Auth::user()->is_admin) {
+			throw new NotAuthorized('Access denied', 401);
+		}
+	}
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -22,10 +28,7 @@ class ProductsController extends Controller {
 	 * @throws NotAuthorized
 	 */
 	public function index() {
-		if (!Auth::user()->is_admin) {
-			throw new NotAuthorized('Access denied', 401);
-		}
-
+		$this->accessible();
 		$products = Product::paginate(5);
 
 		return view('products.list', compact('products'));
@@ -38,9 +41,7 @@ class ProductsController extends Controller {
 	 * @throws NotAuthorized
 	 */
 	public function create() {
-		if (!Auth::user()->is_admin) {
-			throw new NotAuthorized('Access denied', 401);
-		}
+		$this->accessible();
 
 		return view('products.modify');
 	}
@@ -53,10 +54,7 @@ class ProductsController extends Controller {
 	 * @throws NotAuthorized
 	 */
 	public function store(Request $request) {
-		if (!Auth::user()->is_admin) {
-			throw new NotAuthorized('Access denied', 401);
-		}
-
+		$this->accessible();
 		$this->validate($request, $this->validationRules());
 		Product::create([
 			'name' => $request->get('name'),
@@ -68,20 +66,6 @@ class ProductsController extends Controller {
 	}
 
 	/**
-	 * Display the specified resource.
-	 *
-	 * @param  \App\Models\Product $product
-	 * @return \Illuminate\Http\Response
-	 * @throws NotAuthorized
-	 */
-	public function show(Product $product) {
-		if (!Auth::user()->is_admin) {
-			throw new NotAuthorized('Access denied', 401);
-		}
-		//
-	}
-
-	/**
 	 * Show the form for editing the specified resource.
 	 *
 	 * @param  \App\Models\Product $product
@@ -89,9 +73,7 @@ class ProductsController extends Controller {
 	 * @throws NotAuthorized
 	 */
 	public function edit(Product $product) {
-		if (!Auth::user()->is_admin) {
-			throw new NotAuthorized('Access denied', 401);
-		}
+		$this->accessible();
 
 		return view('products.modify', compact('product'));
 	}
@@ -104,10 +86,7 @@ class ProductsController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function update(Request $request, Product $product) {
-		if (!Auth::user()->is_admin) {
-			throw new NotAuthorized('Access denied', 401);
-		}
-
+		$this->accessible();
 		$this->validate($request, $this->validationRules());
 		$product->name = $request->get('name');
 		$product->price = $request->get('price');
@@ -125,10 +104,7 @@ class ProductsController extends Controller {
 	 * @throws NotAuthorized
 	 */
 	public function destroy(Request $request, Product $product) {
-		if (!Auth::user()->is_admin) {
-			throw new NotAuthorized('Access denied', 401);
-		}
-
+		$this->accessible();
 		$product->delete();
 
 		if ($request->get('redirectTo')) {
@@ -139,11 +115,17 @@ class ProductsController extends Controller {
 	}
 
 	public function trashed() {
+		$this->accessible();
 		$products = Product::onlyTrashed()->paginate(5);
+
 		return view('products.list',compact('products'));
 	}
 
-	public function restore() {
+	public function restore($id) {
+		$this->accessible();
+		$product = Product::onlyTrashed()->find($id);
+		$product->restore();
 
+		return back();
 	}
 }
