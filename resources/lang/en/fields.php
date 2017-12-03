@@ -48,6 +48,7 @@ return [
 	'submit' => 'Submit',
 	'back' => 'Back',
 	'period' => 'Period',
+	'home' => 'Home',
 	'search-multi-text' => 'Search :entity or :entity1..',
 	'search' => 'search',
 	'ok' => 'OK',
