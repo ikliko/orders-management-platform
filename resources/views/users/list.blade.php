@@ -1,8 +1,6 @@
 @extends('layouts.dashboard')
 
 @section('dashboard-content')
-    @include('partials.components.filter')
-
     <table class="table table-striped table-hover ">
         <thead>
         <tr>

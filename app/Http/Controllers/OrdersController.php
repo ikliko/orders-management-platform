@@ -32,8 +32,18 @@ class OrdersController extends Controller {
 	public function all(Request $request) {
 		$usersOrders =
 			User::where('name', 'like', '%' . $request->get('user_product') . '%')
-				->with(['orders' => function ($t) use ($request) {
-					$t->with('user')
+				->with(['orders' => function ($orderQuery) use ($request) {
+					$orderQuery->with('user')
+						->with('details')
+						->filter($request->all(['period']));
+				}])
+				->select()
+				->get();
+
+		$productsOrders =
+			Product::where('name', 'like', '%' . $request->get('user_product') . '%')
+				->with(['orders' => function ($orderQuery) use ($request) {
+					$orderQuery->with('user')
 						->with('details')
 						->filter($request->all(['period']));
 				}])
@@ -44,6 +54,12 @@ class OrdersController extends Controller {
 
 		foreach ($usersOrders as $user) {
 			foreach ($user->orders as $order) {
+				$orders->push($order);
+			}
+		}
+
+		foreach ($productsOrders as $product) {
+			foreach ($product->orders as $order) {
 				$orders->push($order);
 			}
 		}
@@ -166,7 +182,7 @@ class OrdersController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function update(Request $request, Order $order) {
-		if(Auth::user()->is_admin) {
+		if (Auth::user()->is_admin) {
 			$this->validate($request, $this->validationRules());
 			$user = User::find($request->get('user_id'));
 			$order->user_id = $user->id;
