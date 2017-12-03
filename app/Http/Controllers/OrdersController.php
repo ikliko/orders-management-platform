@@ -16,7 +16,7 @@ class OrdersController extends Controller {
 			'quantity' => 'required',
 		];
 
-		if (Auth::user()->is_admin) {
+		if (Auth::check() && Auth::user()->is_admin) {
 			$rules['user_id'] = 'required';
 		}
 
@@ -31,17 +31,17 @@ class OrdersController extends Controller {
 	public function all(Request $request) {
 		$usersOrders =
 			User::where('name', 'like', '%' . $request->get('user_product') . '%')
-				->with(['orders'=>function($t) use ($request){
+				->with(['orders' => function ($t) use ($request) {
 					$t->with('user')
-					->filter($request->all(['period']));
+						->filter($request->all(['period']));
 				}])
 				->select()
-		->get();
+				->get();
 
 		$orders = collect([]);
 
-		foreach ($usersOrders as $user){
-			foreach ($user->orders as $order){
+		foreach ($usersOrders as $user) {
+			foreach ($user->orders as $order) {
 				$orders->push($order);
 			}
 		}
@@ -101,7 +101,7 @@ class OrdersController extends Controller {
 	public function store(Request $request) {
 		$this->validate($request, $this->validationRules());
 
-		$user = Auth::user()->is_admin ? User::find($request->get('user_id')) : Auth::user();
+		$user = Auth::check() && Auth::user()->is_admin ? User::find($request->get('user_id')) : Auth::user();
 		$product = Product::find($request->get('product_id'));
 		$total = $product->price * $request->get('quantity');
 
