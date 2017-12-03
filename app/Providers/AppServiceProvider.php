@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -27,6 +28,8 @@ class AppServiceProvider extends ServiceProvider {
 			if(Auth::user()->is_admin) {
 				$view->with('allOrders', Order::count());
 				$view->with('trashedOrders', Order::onlyTrashed()->count());
+				$view->with('allProducts', Product::count());
+				$view->with('trashedProducts', Product::onlyTrashed()->count());
 			}
 			$view->with('myOrders', Auth::user()->orders->count());
 		});

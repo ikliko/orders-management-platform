@@ -8,4 +8,7 @@ try {
     window.$ = window.jQuery = require('jquery');
 
     require('bootstrap-sass');
+    require('bootstrap-switch');
+
+    $(".switcher").bootstrapSwitch();
 } catch (e) {}
