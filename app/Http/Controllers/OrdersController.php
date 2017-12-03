@@ -89,7 +89,7 @@ class OrdersController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function create() {
-		return view('orders.create');
+		return view('orders.modify');
 	}
 
 	/**
@@ -125,7 +125,7 @@ class OrdersController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function show(Order $order) {
-		//
+		return view('orders.show', compact('order'));
 	}
 
 	/**
@@ -138,6 +138,8 @@ class OrdersController extends Controller {
 		if (!Auth::user()->is_admin) {
 			throw new NotAuthorized('Access denied', 401);
 		}
+
+		return view('orders.modify', compact('order'));
 	}
 
 	/**
@@ -148,7 +150,27 @@ class OrdersController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function update(Request $request, Order $order) {
-		//
+		if(Auth::user()->is_admin) {
+			$this->validate($request, $this->validationRules());
+			$user = User::find($request->get('user_id'));
+			$order->user_id = $user->id;
+			$oldProduct = $order->details()->first();
+			$order->details()->detach($oldProduct->id);
+			$newProduct = Product::find($request->get('product_id'));
+			$order->details()->attach($newProduct->id, [
+				'quantity' => $request->get('quantity')
+			]);
+			$total = +$request->get('quantity') * $newProduct->price;
+			if ($newProduct->discount && $request->get('quantity') > 2) {
+				$total -= ($total * 0.2);
+			}
+			$order->total = $total;
+			$order->save();
+
+			return back();
+		}
+
+		throw new NotAuthorized('Access denied', 401);
 	}
 
 	/**
@@ -158,9 +180,13 @@ class OrdersController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 * @throws NotAuthorized
 	 */
-	public function destroy(Order $order) {
+	public function destroy(Request $request, Order $order) {
 		if (Auth::user()->is_admin) {
 			$order->delete();
+
+			if ($request->get('redirectTo')) {
+				return redirect($request->get('redirectTo'));
+			}
 
 			return back();
 		}

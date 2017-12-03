@@ -1,4 +1,4 @@
-@if(isset($hideBtn) && !$hideBtn)
+@if(!isset($hideBtn) || isset($hideBtn) && !$hideBtn)
     <button type="button"
             data-toggle="modal"
             data-target="#{{$modal}}"

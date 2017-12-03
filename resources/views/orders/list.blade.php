@@ -32,28 +32,32 @@
                             <i class="ion ion-ios-more"></i>
                         </a>
                         <ul class="dropdown-menu">
-                            <li>
-                                <a href="{{url('orders/' . $order->id)}}">
-                                    <i class="ion ion-ios-eye"></i>&nbsp; View
-                                </a>
-                            </li>
-                            @if(Auth::user()->is_admin)
+                            @if(Request::url() !== url('orders/trashed'))
                                 <li>
-                                    <a href="{{url('orders/' . $order->id . '/edit')}}">
-                                        <i class="ion ion-edit"></i>&nbsp; Edit
+                                    <a href="{{url('orders/' . $order->id)}}">
+                                        <i class="ion ion-ios-eye"></i>&nbsp; View
                                     </a>
                                 </li>
+                            @endif
+                            @if(Auth::user()->is_admin)
+                                @if(Request::url() !== url('orders/trashed'))
+                                    <li>
+                                        <a href="{{url('orders/' . $order->id . '/edit')}}">
+                                            <i class="ion ion-edit"></i>&nbsp; Edit
+                                        </a>
+                                    </li>
+                                @endif
                                 <li>
                                     @if(Request::url() !== url('orders/trashed'))
                                         <a data-toggle="modal"
-                                                data-target="#deleteModal">
+                                           data-target="#deleteModal">
                                             <i class="ion ion-ios-trash"></i>&nbsp; Delete
                                         </a>
                                     @endif
 
                                     @if(Request::url() === url('orders/trashed'))
                                         <a data-toggle="modal"
-                                                data-target="#restoreModal">
+                                           data-target="#restoreModal">
                                             <i class="ion ion-ios-undo-outline'"></i>&nbsp; Restore
                                         </a>
                                     @endif

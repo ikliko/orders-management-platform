@@ -1,13 +1,13 @@
 @extends('layouts.dashboard')
 
 @section('dashboard-content')
-    {!! Form::open(['url' => 'orders', 'class' => 'form-horizontal']) !!}
+    {!! Form::open(['url' => isset($order) ? 'orders/'.$order->id : 'orders', 'method' => isset($order) ? 'PUT' : 'POST', 'class' => 'form-horizontal']) !!}
     <fieldse>
         @if(Auth::user()->is_admin)
         <div class="form-group {{$errors->has('user_id') ? 'has-error' : '' }}">
             <label for="select" class="col-lg-2 control-label">User</label>
             <div class="col-lg-10">
-                {!! Form::select('user_id', \App\User::pluck('name', 'id'), null, array('class' => 'form-control')) !!}
+                {!! Form::select('user_id', \App\User::pluck('name', 'id'), isset($order) ? $order->user->id : null, ['class' => 'form-control']) !!}
             </div>
             @if($errors->has('user_id'))
                 <p class="text-danger">{{$errors->first('user_id')}}</p>
@@ -17,7 +17,7 @@
         <div class="form-group {{$errors->has('product_id') ? 'has-error' : '' }}">
             <label for="product" class="col-lg-2 control-label">Product</label>
             <div class="col-lg-10">
-                {!! Form::select('product_id', \App\Models\Product::pluck('name', 'id'), null, array('id' => 'product', 'class' => 'form-control')) !!}
+                {!! Form::select('product_id', \App\Models\Product::pluck('name', 'id'), isset($order) ? $order->details()->first()->id : null, array('id' => 'product', 'class' => 'form-control')) !!}
                 @if($errors->has('product_id'))
                     <p class="text-danger">{{$errors->first('product_id')}}</p>
                 @endif
@@ -32,7 +32,7 @@
                        name="quantity"
                        placeholder="Quantity"
                        min="1"
-                       value="1">
+                       value="{{isset($order) ? $order->details()->first()->pivot->quantity : 1}}">
                 @if($errors->has('quantity'))
                     <p class="text-danger">{{$errors->first('quantity')}}</p>
                 @endif
