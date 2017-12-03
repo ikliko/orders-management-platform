@@ -4,14 +4,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">Orders</div>
-                    <div class="panel-body rm-pa">
-                        <div class="list-group rm-mb">
-                            @include('menus.sidebar')
-                        </div>
-                    </div>
-                </div>
+                @include('menus.sidebar')
             </div>
             <div class="col-md-8">
                 <div class="panel panel-default">

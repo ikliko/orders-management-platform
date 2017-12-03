@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 
 class OrdersController extends Controller {
@@ -33,6 +34,7 @@ class OrdersController extends Controller {
 			User::where('name', 'like', '%' . $request->get('user_product') . '%')
 				->with(['orders' => function ($t) use ($request) {
 					$t->with('user')
+						->with('details')
 						->filter($request->all(['period']));
 				}])
 				->select()
@@ -46,6 +48,20 @@ class OrdersController extends Controller {
 			}
 		}
 
+		$orders = $orders->sortBy('created_at', SORT_DESC, true);
+
+		$page = $request->get('page', 1); // Get the ?page=1 from the url
+		$perPage = 5; // Number of items per page
+		$offset = ($page * $perPage) - $perPage;
+
+		$orders = new LengthAwarePaginator(
+			array_slice($orders->toArray(), $offset, $perPage, true), // Only grab the items we need
+			count($orders), // Total items
+			$perPage, // Items per page
+			$page, // Current page
+			['path' => $request->url(), 'query' => $request->query()] // We need this so we can keep all old query parameters from the url
+		);
+
 		return view('orders.list', compact('orders'));
 	}
 
@@ -55,7 +71,7 @@ class OrdersController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function trashed() {
-		$orders = Order::onlyTrashed()->get();
+		$orders = Order::onlyTrashed()->paginate(5);
 
 		return view('orders.list', compact('orders'));
 	}
@@ -78,7 +94,7 @@ class OrdersController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function index() {
-		$orders = Auth::user()->orders;
+		$orders = Auth::user()->orders()->paginate(5);
 
 		return view('orders.list', compact('orders'));
 	}

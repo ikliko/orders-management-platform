@@ -17,15 +17,15 @@
         </tr>
         </thead>
         <tbody>
-        @foreach($orders as $order)
+        @foreach($orders->items() as $order)
             <tr>
-                <td>{{$order->id}}</td>
-                <td>{{$order->user->name}}</td>
-                <td>{{$order->details->first()->name}}</td>
-                <td>{{$order->details->first()->price}}</td>
-                <td>{{$order->details->first()->pivot->quantity}}</td>
-                <td>{{$order->total}}</td>
-                <td>{{$order->created_at->format('d M Y, h:iA')}}</td>
+                <td>{{$order['id']}}</td>
+                <td>{{$order['user']['name']}}</td>
+                <td>{{$order['details'][0]['name']}}</td>
+                <td>{{$order['details'][0]['price']}}</td>
+                <td>{{$order['details'][0]['pivot']['quantity']}}</td>
+                <td>{{$order['total']}}</td>
+                <td>{{\Carbon\Carbon::parse($order['created_at'])->format('d M Y, h:iA')}}</td>
                 <td>
                     <div class="btn-group">
                         <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
@@ -34,7 +34,7 @@
                         <ul class="dropdown-menu">
                             @if(Request::url() !== url('orders/trashed'))
                                 <li>
-                                    <a href="{{url('orders/' . $order->id)}}">
+                                    <a href="{{url('orders/' . $order['id'])}}">
                                         <i class="ion ion-ios-eye"></i>&nbsp; View
                                     </a>
                                 </li>
@@ -42,7 +42,7 @@
                             @if(Auth::user()->is_admin)
                                 @if(Request::url() !== url('orders/trashed'))
                                     <li>
-                                        <a href="{{url('orders/' . $order->id . '/edit')}}">
+                                        <a href="{{url('orders/' . $order['id'] . '/edit')}}">
                                             <i class="ion ion-edit"></i>&nbsp; Edit
                                         </a>
                                     </li>
@@ -70,10 +70,10 @@
                                 'hideBtn' => true,
                                 'btnText' => '&nbsp; Delete',
                                 'modal' => 'deleteModal',
-                                'url' => url('orders/'.$order->id),
+                                'url' => url('orders/'.$order['id']),
                                 'method' => 'DELETE',
                                 'title' => 'Are you sure?',
-                                'text' => 'You are going to delete order #'. $order->id
+                                'text' => 'You are going to delete order #'. $order['id']
                             ])
                         @endif
 
@@ -83,10 +83,10 @@
                                 'btnText' => '&nbsp; Restore',
                                 'btnIcon' => 'ion-ios-undo-outline',
                                 'modal' => 'restoreModal',
-                                'url' => url('orders/'.$order->id.'/restore'),
+                                'url' => url('orders/'.$order['id'].'/restore'),
                                 'method' => 'POST',
                                 'title' => 'Are you sure?',
-                                'text' => 'You are going to restore order #'. $order->id
+                                'text' => 'You are going to restore order #'. $order['id']
                             ])
                         @endif
                     </div>
@@ -95,4 +95,25 @@
         @endforeach
         </tbody>
     </table>
+
+    <ul class="pagination pagination-sm">
+        <li class="{{$orders->currentPage() === 1 ? 'disabled' : ''}}">
+            @if($orders->currentPage() === 1)
+                <a>&laquo;</a>
+            @else
+                <a href="{{Request::url()}}?page={{$orders->currentPage()-1}}">&laquo;</a>
+            @endif
+        </li>
+        @for ( $i = 1; $i <= $orders->lastPage() ; $i++ )
+            <li class="{{$i === $orders->currentPage() ? 'active' : ''}}"><a
+                        href="{{Request::url()}}?page={{$i}}">{{$i}}</a></li>
+        @endfor
+        <li class="{{$orders->currentPage() === $orders->lastPage() ? 'disabled' : ''}}">
+            @if($orders->currentPage() === $orders->lastPage())
+                <a>&raquo;</a>
+            @else
+                <a href="{{Request::url()}}?page={{$orders->currentPage()+1}}">&raquo;</a>
+            @endif
+        </li>
+    </ul>
 @stop
