@@ -27,5 +27,11 @@ Route::group(['middleware' => ['auth']], function () {
 		Route::post('{id}/restore', 'OrdersController@restore');
 	});
 	Route::resource('/orders', 'OrdersController');
+	Route::group(['prefix' => 'settings'], function () {
+		Route::get('/', 'UsersController@settings');
+		Route::post('/', 'UsersController@update');
+		Route::get('security', 'UsersController@security');
+		Route::post('security', 'UsersController@securityUpdate');
+	});
 });
 Route::get('/home', 'HomeController@auth')->name('home');

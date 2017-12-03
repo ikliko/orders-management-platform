@@ -10,12 +10,13 @@
 
     <ul class="dropdown-menu">
         <li>
-            <a href="#">Settings</a>
+            <a href="{{url('settings')}}"><i class="ion-gear-b"></i>&nbsp; Settings</a>
         </li>
         <li class="divider"></li>
         <li>
             <a href="{{ route('logout') }}"
                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <i class="ion-log-out"></i>&nbsp;
                 Logout
             </a>
 
