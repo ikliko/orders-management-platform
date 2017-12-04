@@ -61,7 +61,7 @@ class UsersController extends Controller {
 	}
 
 	public function updateProfile(Request $request) {
-		$this->validate($request, $this->rules( Auth::user()->id));
+		$this->validate($request, $this->rules(Auth::user()->id));
 		$user = Auth::user();
 		$user->name = $request->get('name');
 		$user->email = $request->get('email');
@@ -69,7 +69,7 @@ class UsersController extends Controller {
 
 		return back();
 	}
-	
+
 	public function accessible() {
 		if (!Auth::user()->is_admin) {
 			throw new NotAuthorized('Access denied', 401);
@@ -109,10 +109,11 @@ class UsersController extends Controller {
 	public function store(Request $request) {
 		$this->accessible();
 		$this->validate($request, $this->rules());
-		User::create([
+		$user = User::create([
 			'name' => $request->get('name'),
 			'email' => $request->get('email'),
-			'password' => bcrypt('123456')
+			'password' => bcrypt('123456'),
+			'is_admin' => !!$request->get('is_admin')
 		]);
 
 		return back();
@@ -140,9 +141,10 @@ class UsersController extends Controller {
 	 */
 	public function update(Request $request, User $user) {
 		$this->accessible();
-		$this->validate($request, $this->rules( $user->id));
+		$this->validate($request, $this->rules($user->id));
 		$user->name = $request->get('name');
 		$user->email = $request->get('email');
+		$user->is_admin = !!$request->get('is_admin');
 		$user->save();
 
 		return back();
@@ -170,7 +172,7 @@ class UsersController extends Controller {
 		$this->accessible();
 		$users = User::onlyTrashed()->paginate(5);
 
-		return view('users.list',compact('users'));
+		return view('users.list', compact('users'));
 	}
 
 	public function restore($id) {

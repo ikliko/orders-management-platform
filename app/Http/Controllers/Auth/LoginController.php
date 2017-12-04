@@ -40,7 +40,7 @@ class LoginController extends Controller {
 
 	public function regular() {
 		if (env('DEMO')) {
-			Auth::login(User::find(rand(1, 20)));
+			Auth::login(User::whereIsAdmin(false)->inRandomOrder()->first());
 
 			return redirect($this->redirectTo);
 		}

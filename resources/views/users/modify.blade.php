@@ -21,6 +21,16 @@
                 @endif
             </div>
         </div>
+        <div class="form-group {{$errors->has('is_admin') ? 'has-error' : '' }}">
+            <label for="select" class="col-lg-2 control-label">{{trans_choice('fields.administrators', 1)}}</label>
+            <div class="col-lg-10">
+                <input type="checkbox" name="is_admin"
+                       class="switcher" {{ isset($user) && $user->is_admin ? 'checked': ''}}>
+                @if($errors->has('is_admin'))
+                    <p class="text-danger">{{$errors->first('is_admin')}}</p>
+                @endif
+            </div>
+        </div>
         <div class="form-group text-center">
             <a href="{{url('home')}}" class="btn btn-default">@lang('fields.cancel')</a>
             <button type="submit" class="btn btn-primary">@lang('fields.submit')</button>
