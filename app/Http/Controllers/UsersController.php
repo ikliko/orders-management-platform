@@ -109,7 +109,7 @@ class UsersController extends Controller {
 	public function store(Request $request) {
 		$this->accessible();
 		$this->validate($request, $this->rules());
-		$user = User::create([
+		User::create([
 			'name' => $request->get('name'),
 			'email' => $request->get('email'),
 			'password' => bcrypt('123456'),
