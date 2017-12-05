@@ -24,12 +24,7 @@ class OrdersController extends Controller {
 		return $rules;
 	}
 
-	/**
-	 * Displaying full listing of the resource
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
-	public function all(Request $request) {
+	public function filterOrders(Request $request) {
 		$usersOrders =
 			User::where('name', 'like', '%' . $request->get('user_product') . '%')
 				->with(['orders' => function ($orderQuery) use ($request) {
@@ -64,19 +59,35 @@ class OrdersController extends Controller {
 			}
 		}
 
-		$orders = $orders->unique('id')->sortBy('created_at', SORT_DESC, true);
+		return $orders;
+	}
 
+	public function paginate(Request $request, $collection) {
 		$page = $request->get('page', 1); // Get the ?page=1 from the url
 		$perPage = 5; // Number of items per page
 		$offset = ($page * $perPage) - $perPage;
 
 		$orders = new LengthAwarePaginator(
-			array_slice($orders->toArray(), $offset, $perPage, true), // Only grab the items we need
-			count($orders), // Total items
+			array_slice($collection->toArray(), $offset, $perPage, true), // Only grab the items we need
+			count($collection), // Total items
 			$perPage, // Items per page
 			$page, // Current page
 			['path' => $request->url(), 'query' => $request->query()] // We need this so we can keep all old query parameters from the url
 		);
+
+		return $orders;
+	}
+
+	/**
+	 * Displaying full listing of the resource
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function all(Request $request) {
+		$orders = $this->filterOrders($request)
+			->unique('id')
+			->sortBy('created_at', SORT_DESC, true);
+		$orders = $this->paginate($request, $orders);
 
 		return view('orders.list', compact('orders'));
 	}
@@ -109,8 +120,19 @@ class OrdersController extends Controller {
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function index() {
-		$orders = Auth::user()->orders()->paginate(5);
+	public function index(Request $request) {
+		$allOrders = $this->filterOrders($request)
+			->unique('id')
+			->sortBy('created_at', SORT_DESC, true);
+		$orders = collect([]);
+
+		foreach ($allOrders as $order) {
+			if ($order['user']['id'] === Auth::user()->id) {
+				$orders->push($order);
+			}
+		}
+
+		$orders = $this->paginate($request, $orders);
 
 		return view('orders.list', compact('orders'));
 	}
